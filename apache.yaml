@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Cloud Formation Apache Server.
+Resources:
+  Apache:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0ab4d1e9cf9a1215a
+      InstanceType: t2.micro
+      KeyName: ec2_key   # please just put your own key name (without .pem)
+      SecurityGroups: 
+        - allow ssh and http
+      Tags:
+        - Key: Name
+          Value: Apache
+      UserData:
+        Fn::Base64: |
+          #! /bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd
+          yum install git -y
+          cd /var/www/html
+          git clone https://github.com/ser-2007/projectone
+          cd projectone
+          cp * /var/www/html/
+          rm -rf aws_proje/
+          chmod -R 777 *
